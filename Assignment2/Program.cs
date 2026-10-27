@@ -1,11 +1,12 @@
-﻿using Assignment2;
-using System;
+﻿using System;
 using System.Collections.Generic;
-
+using BankAccountInfo;
+using VehicleInfo;
 class Program
 {
     static void Main()
     {
+        //task 2.1
         BankAccount account = new BankAccount(1000m);
 
         Console.WriteLine(account.GetBalance());
@@ -30,6 +31,17 @@ class Program
         Console.WriteLine(account.GetBalance());
 
         account.PrintHistory();
+
+        //task 2.2
+        Vehicle vehicle = new Vehicle("Honda", "City", 2024);
+        Car car = new Car("Mercedez", "e class", 2026, 4);
+        Bike bike = new Bike("Yamaha", "Fz", 2026, false);
+        ElectricCar electriccar = new ElectricCar("BYD", "newest", 2026, 4, "105 kwh");
+        vehicle.DisplayInfo();
+        car.DisplayInfo();
+        bike.DisplayInfo();
+        electriccar.DisplayInfo();
+
 
     }
 }
