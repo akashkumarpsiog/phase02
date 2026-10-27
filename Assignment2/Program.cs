@@ -1,4 +1,5 @@
 ﻿using System;
+using Assignment2;
 using System.Collections.Generic;
 using BankAccountInfo;
 using VehicleInfo;
@@ -42,7 +43,12 @@ class Program
         bike.DisplayInfo();
         electriccar.DisplayInfo();
 
-
+        //task 2.3
+        Notification notif = new Notification();
+        notif.Send();
+        EmailNotification Emailnotif = new EmailNotification();
+        Emailnotif.Send();
+        SMSNotification SMSnotif = new SMSNotification();
+        SMSnotif.Send();
     }
 }
-
