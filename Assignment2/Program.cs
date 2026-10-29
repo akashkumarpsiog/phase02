@@ -3,6 +3,7 @@ using Assignment2;
 using System.Collections.Generic;
 using BankAccountInfo;
 using VehicleInfo;
+using MathOps;
 class Program
 {
     static void Main()
@@ -136,5 +137,39 @@ class Program
         // Equals and GetHashCode consistency
         Console.WriteLine(a.Equals(c)); // True
         Console.WriteLine(a.GetHashCode() == c.GetHashCode()); // True
+
+        //task 2.8
+        //MathOperations.MathOperation operation = MathOperations.Add;
+        //built in func delegate
+        Func<double, double, double> operation = MathOperations.Add;
+        Console.WriteLine(operation(10, 5));
+
+        operation = MathOperations.Subtract;
+        Console.WriteLine(operation(10, 5));
+
+        operation = MathOperations.Add;
+        operation += MathOperations.Multiply;
+        operation += MathOperations.Divide;
+
+        Console.WriteLine(operation(10, 5));
+        //for mulicast delegates, all of the methods execute (here add, multiple divide all execute), but the output only gives you the return value of the last method. So with void methods, all of those methods happen. 
+        // Ex: with notify, we can call sms, email and notification method. If one method throws an exception, the remaining in the invocation list wont execute unless its handled within the method.
+
+        //task 2.9
+        AlarmClock alarmclock = new();
+        Person person = new();
+        CoffeeMachine coffeeMachine = new();
+
+        alarmclock.OnAlarmRing += person.WakeUp;
+        alarmclock.OnAlarmRing += coffeeMachine.MakeCoffee;
+        alarmclock.Ring();
+
+        //task 2.10
+        List<int> numbers = new() { 1, 2, 3, 4, 5, 6 };
+        Predicate<int> isEven = n => n % 2 == 0;
+        Func<int, int> square = n => n * n;
+        Action<string> print = message => Console.WriteLine(message);
+        ListProcessor processor = new();
+        processor.ProcessList(numbers, isEven, square, print);
     }
 }
