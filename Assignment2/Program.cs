@@ -1,9 +1,12 @@
-﻿using System;
-using Assignment2;
-using System.Collections.Generic;
+﻿using Assignment2;
 using BankAccountInfo;
-using VehicleInfo;
 using MathOps;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using VehicleInfo;
+using System.Linq;
+using System.ComponentModel;
 class Program
 {
     static void Main()
@@ -21,7 +24,7 @@ class Program
         catch (InvalidOperationException) { Console.WriteLine("Overdraw rejected"); }
 
         try { account.Deposit(-100m); }
-        catch (ArgumentOutOfRangeException) { Console.WriteLine("Negative deposit rejected"); } 
+        catch (ArgumentOutOfRangeException) { Console.WriteLine("Negative deposit rejected"); }
 
         try { account.Withdraw(-100m); }
         catch (InvalidOperationException) { Console.WriteLine("Negative withdrawal rejected"); }
@@ -165,11 +168,167 @@ class Program
         alarmclock.Ring();
 
         //task 2.10
+        //we can do normal squaring and even methods. but what if we want the future list processor to filter odd numbers, double them, then we would have ot modify the method.
+        //with delegates we dont have to rewrite the processing method, just the delegates.
         List<int> numbers = new() { 1, 2, 3, 4, 5, 6 };
-        Predicate<int> isEven = n => n % 2 == 0;
-        Func<int, int> square = n => n * n;
-        Action<string> print = message => Console.WriteLine(message);
+        Predicate<int> isEven = n => n % 2 == 0; //accepts int, return bool
+        Func<int, int> square = n => n * n; //accepts two int, returns int
+        Action<string> print = message => Console.WriteLine(message); //accepts text, return nothing
         ListProcessor processor = new();
         processor.ProcessList(numbers, isEven, square, print);
+
+        // First pattern with delegates: 
+        // 1. Declare central method that accepts delegates
+        // 2. define behavior/delegates outside the method.
+        // 3. pass the delegate/behavior to the central method.
+
+        // Events:
+        // 1. define event data. (can inherit from EventArgs) - this is so subscribers can have info about the event.
+        // 2. Declare the event. This public event EventHandler<> x; establishes the event that subscribers can register with.
+        // the EventHandler<a> is a built in delegate type. It describes the handler it recieves.
+        // 3. Raise the event using Invoke (call the methods currently registered with this delegate/event - passing them these arguments).
+        // 4. write subscriber methods
+        // 5. subscribe and trigger - add the method to the event. The subscriber uses the signature.
+        // 6. when the event happens (that method is called) - the data of the event object is created and passed with the object in Invoke.
+        // EventArgs is used when there is no event data: Ex:
+        // public event EventHandler? OnAlarmRing; 
+        // public void Ring() { OnAlarmRing?Invoke(this,EventArgs.Empty); }
+
+
+        //task 2.11
+        // When we apply the same logic, but the only difference is what object is given, we can use Generics -> we write the logic once and make the type configurable.
+        // T is the type parameter and it is a placeholder for a type that will be specified when we use repository later.
+        // A repository(arbitrary class name) is a commonly used name for a class that manages data access.
+
+        Repository<Student> students = new();
+        students.Add(new Student(1, "Vishvalingam", 23));
+        students.Add(new Student(2, "abijith", 23));
+        students.Add(new Student(3, "Akash", 24));
+
+        foreach (Student student in students.GetAll())
+        {
+            Console.WriteLine(student);
+        }
+
+        students.Update(1, new Student(2, "marlin", 23));
+        foreach (Student student in students.GetAll())
+        {
+            Console.WriteLine(student);
+        }
+
+        students.Delete(0);
+        foreach (Student student in students.GetAll())
+        {
+            Console.WriteLine(student);
+        }
+        Student EmptyStudent = students.CreateNew();
+        Console.WriteLine(EmptyStudent);
+
+
+        Repository<Product> products = new();
+        products.Add(new Product(1, "guitar", 2300m));
+        products.Add(new Product(2, "drums", 2000m));
+
+        foreach (Product product in products.GetAll())
+        {
+            Console.WriteLine(product);
+        }
+
+        products.Update(1, new Product(2, "keyboard", 3000m));
+        foreach (Product product in products.GetAll())
+        {
+            Console.WriteLine(product);
+        }
+
+        products.Delete(0);
+        foreach (Product product in products.GetAll())
+        {
+            Console.WriteLine(product);
+        }
+        Product EmptyProduct = products.CreateNew();
+        Console.WriteLine(EmptyProduct);
+
+        //task 2.12
+        // IEnumerable<T> is a promise that this object can provide a sequence of T values that we can iterate over.
+        // instead of creating a list, adding data to it and then returning those numbers we can use yield return. It produces one value and pauses execution of the method. 
+        // When the caller requests the next value, the method resumes from where it paused. It is lazy execution because it produces output one at a time.
+
+        Console.WriteLine("Before foreach");
+        foreach (int num in GetEvenNumbers(10))
+        {
+            Console.WriteLine($"Consumed:{num}");
+        }
+        Console.WriteLine("After foreach");
+
+        var books = new BookCollection();
+        books.Add(new Book("abc book", "Mark"));
+        books.Add(new Book("Atomic Habits", "James Clear"));
+        books.Add(new Book("xyz book", "George RR Martin"));
+        books.Add(new Book("1984", "George Orwell"));
+
+        foreach (Book book in books)
+        {
+            Console.WriteLine($"{book.Title} - {book.Author}");
+        }
+
+        //task 2.13
+        // LINQ - Language Integrated Query
+        // without linq we would write multiple foreach, if temporary lists and dictionaries. Query syntax is translated by c# compiler into method calls.
+        // We can write with query syntax which is like SQL or method syntax which uses methods nad lambda expressions.
+
+        EmployeeManager empMan = new EmployeeManager();
+        empMan.HighSalary();
+        empMan.GetDepartmentSummary();
+        empMan.EmployeeInfo();
+        empMan.FilteredQuerySalary();
+    }
+    public static IEnumerable<int> GetEvenNumbers(int max)
+    {
+        Console.WriteLine("Iterator started");
+        for (int i = 2; i <= max; i++)
+        {
+            if (i % 2 == 0)
+                Console.WriteLine($"Producing: {i}");
+                yield return i;
+        }
+    }
+
+    public class Book
+    {
+        public string Title { get; set; }
+        public string Author { get; set; }
+
+        public Book(string title, string author)
+        {
+            Title = title;
+            Author = author;
+        }
+    }
+
+    public class BookCollection : IEnumerable<Book> //this shows that BookCollection can be enumerated.
+    {
+        private readonly List<Book> _books = new(); //internal list
+
+        public void Add(Book book)
+        {
+            _books.Add(book);
+        }
+
+        public IEnumerator<Book> GetEnumerator()
+        {
+            foreach (Book book in _books.OrderBy(b => b.Title))
+            {
+                yield return book;
+            }
+        } //this is the generic implementation.
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        //before generics were introduced, collections used non generic interfaces. 
+        // With that, the enumerable could contain different types. So it was less type safe and required casting. 
+        //Generics fixedthis. But .NET retained the original non-generic IEnumerable interface for backward compatibility.
     }
 }
+
