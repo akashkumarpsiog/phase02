@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using VehicleInfo;
 using System.Linq;
 using System.ComponentModel;
+using NotificationAssignment;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
+using LibraryManagement;
 class Program
 {
     static void Main()
@@ -88,7 +92,7 @@ class Program
             s.DisplayArea();
         }
 
-        Logger logger = new Logger();
+        Assignment2.Logger logger = new Assignment2.Logger();
         FileLogger filelogger = new FileLogger();
         //this gives expected output
         logger.Log();
@@ -97,7 +101,7 @@ class Program
         //but C# chooses which method to call based on the variables declared type.
         //So if we use Logger logger = new FileLogger() then use logger.log() we would still get Logger.log()
         //override would use runtime polymorphism.
-        Logger l = new FileLogger();
+        Assignment2.Logger l = new FileLogger();
         l.Log();
 
         //task 2.7
@@ -281,7 +285,161 @@ class Program
         empMan.GetDepartmentSummary();
         empMan.EmployeeInfo();
         empMan.FilteredQuerySalary();
+
+        //task 2.14
+        // this keyword tells the compiler that this static method can also be called using instance-method syntax on a string object.
+        //extension methods do not add methods to the original class. We dont modify System.string for example. We sare using the compiler supported syntax to make a static method look like an instance method. 
+
+        string name1 = "aKASH KUMAR";
+        string name2 = "hello WORLD";
+
+        Console.WriteLine(name1.ToTitleCase());
+        Console.WriteLine(name2.ToTitleCase());
+
+        List<int> emptyList = new();
+        List<int> populatedList = new() { 10, 20, 30 };
+        List<int>? nullList = null;
+
+        Console.WriteLine(emptyList.IsNullOrEmpty());      // True
+        Console.WriteLine(populatedList.IsNullOrEmpty());  // False
+        Console.WriteLine(nullList.IsNullOrEmpty());       // True
+
+        Console.WriteLine(0.ToWords());    // Zero
+        Console.WriteLine(20.ToWords());   // Twenty
+        Console.WriteLine(42.ToWords());   // Forty-two
+        Console.WriteLine(101.ToWords());  // One Hundred and One
+
+        int[] invalidNumbers = { -1, 1000 };
+
+        foreach (int number in invalidNumbers)
+        {
+            try
+            {
+                Console.WriteLine(number.ToWords());
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Console.WriteLine($"Invalid input: {number}");
+            }
+        }
+
+        EmployeeManager manager = new EmployeeManager();
+
+        manager.EmployeeAnnualSalary();
+
+
+
+        //Task Mini Q4 Employee Payroll
+
+        Console.WriteLine("Employee Payroll");
+        List<Employees.Employee> EmployeeList = new List<Employees.Employee>
+        {
+            new Employees.FullTime("Alice", "HR", 5000, 1000),
+            new Employees.FullTime("Alan", "HR", 4000, 1000),
+            new Employees.FullTime("Bob", "IT", 7000, 1000),
+
+            new Employees.PartTime("Meera", "IT", 4000, 1000),
+            new Employees.PartTime("Poorvika", "HR", 4000, 1000),
+            new Employees.PartTime("Xavier", "Management", 10000, 1000),
+
+            new Employees.Contractor("Tanmay", "Management", 12000),
+            new Employees.Contractor("Katy", "Sales", 15000),
+            new Employees.Contractor("Hannah", "IT", 10000)
+        };
+
+        var GroupedEmployees = EmployeeList.GroupBy(e => e.Department);
+        foreach (var group in GroupedEmployees)
+        {
+            Console.WriteLine($"Department: {group.Key}");
+            double DepartmentPayroll = group.Sum(e => e.CalculateSalary());
+            
+            foreach (var employee in group)
+            {
+                Console.WriteLine($"Employee: {employee.Name}, Salary: {employee.CalculateSalary()}");
+            }
+            Console.WriteLine($"Department Payroll: {DepartmentPayroll}");
+        }
+
+        // total payroll
+        double TotalPayroll = EmployeeList.Sum(e => e.CalculateSalary());
+        Console.WriteLine($"Total Payroll: {TotalPayroll}");
+
+        //task Mini Q5 - delegates
+        NotificationService service = new NotificationService();
+
+        NotificationAssignment.Logger notifLogger = new NotificationAssignment.Logger();
+
+        EmailNotif emailObj = new EmailNotif();
+        SMSNotif smsObj = new SMSNotif();
+        PushNotif pushObj = new PushNotif();
+
+        service.OnNotificationSent += notifLogger.LoggingEvent;
+
+        service.Notify(emailObj.SendEmail, "Hi email");
+        service.Notify(smsObj.SendSMS, "hi sms");
+        service.Notify(pushObj.SendPush, "hi push");
+
+
+        // Task Mini Q6 - Library Management LINQ
+
+        List<LibraryManagement.Book> Library = new()
+        {
+            new("The Hobbit", "J.R.R. Tolkien", "Fantasy", 1937, true),
+            new("1984", "George Orwell", "Dystopian", 1949, false),
+            new("Animal Farm", "George Orwell", "Satire", 1945, true),
+            new("The Great Gatsby", "F. Scott Fitzgerald", "Classic", 1925, true),
+            new("To Kill a Mockingbird", "Harper Lee", "Classic", 1960, false),
+            new("Dune", "Frank Herbert", "Science Fiction", 1965, true),
+            new("Foundation", "Isaac Asimov", "Science Fiction", 1951, true),
+            new("Harry Potter and the Philosopher's Stone", "J.K. Rowling", "Fantasy", 1997, true),
+            new("The Da Vinci Code", "Dan Brown", "Thriller", 2003, false),
+            new("The Alchemist", "Paulo Coelho", "Fiction", 1988, true),
+            new("The Hunger Games", "Suzanne Collins", "Dystopian", 2008, true),
+            new("The Fault in Our Stars", "John Green", "Romance", 2012, false),
+            new("The Martian", "Andy Weir", "Science Fiction", 2011, true),
+            new("Educated", "Tara Westover", "Memoir", 2018, true),
+            new("Project Hail Mary", "Andy Weir", "Science Fiction", 2021, true),
+            new("Atomic Habits", "James Clear", "Self-Help", 2018, true)
+        };
+
+        // 1. Find the oldest book
+        var oldestBook = LibraryManagement.BookQueries.OldestBook(Library);
+
+        if (oldestBook != null)
+        {
+            Console.WriteLine($"Oldest Book: {oldestBook.Title}, Year: {oldestBook.Year}");
+        }
+
+        // 2. Find books published after 2010
+        var booksAfter2010 = LibraryManagement.BookQueries.BooksAfterYear(Library, 2010);
+
+        foreach (var book in booksAfter2010)
+        {
+            Console.WriteLine($"Book: {book.Title}, Year: {book.Year}");
+        }
+
+        // 3. Find books by author
+        var booksByAuthor = LibraryManagement.BookQueries.BooksByAuthor("Suzanne Collins", Library);
+
+        foreach (var book in booksByAuthor)
+        {
+            Console.WriteLine(book.Title);
+        }
+
+        // 4. Group books by genre
+        var booksByGenre = LibraryManagement.BookQueries.BooksByGenre(Library);
+
+        foreach (var genre in booksByGenre)
+        {
+            Console.WriteLine($"Genre Name: {genre.Genre}");
+            Console.WriteLine($"Number of books: {genre.Count}");
+        }
+
     }
+
+
+
+
     public static IEnumerable<int> GetEvenNumbers(int max)
     {
         Console.WriteLine("Iterator started");
@@ -330,5 +488,23 @@ class Program
         // With that, the enumerable could contain different types. So it was less type safe and required casting. 
         //Generics fixedthis. But .NET retained the original non-generic IEnumerable interface for backward compatibility.
     }
+
+
+
 }
 
+// method hiding is compile time. method overriding is runtime polymorphism - it uses virtual dispatch.
+// method overloading is compile time.
+// compile time binding first - based on reference type. then we switch to virtual dispatch for runtime polymorphism if virtual or abstract is used (runtime/ dynamic dispatch).
+// EventHandler - its signature is:
+// public delegate void EventHandler (object? sender, EventArgs e); - sender is object raising event, e is the event data. EventArgs is a base class for event data. It can be used when there is no event data.
+// we can declare public event EventHandler<x>? OnX; Then we can raise the event with OnX?.Invoke(this, new x{ a = B });
+// having yield return makes a method an iterator method. Its body doesnt start executing until someone requests elements from that sequence.
+
+
+
+
+//Generate code coverage data:
+//dotnet test --collect:"XPlat Code Coverage"
+//Generate HTML coverage report
+//reportgenerator "-reports:Assignment2.Tests/TestResults/**/coverage.cobertura.xml" "-targetdir:coveragereport" "-reporttypes:Html;TextSummary"

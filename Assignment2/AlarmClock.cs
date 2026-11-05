@@ -19,11 +19,14 @@ namespace Assignment2
     public class AlarmClock
     {
         public event EventHandler<AlarmEventArgs>? OnAlarmRing;
+        //EventHandler defines the type of methods that cna subscribe - it is a built in delegate. The OnAlarmRing here is the name of the event.
+        //EventHandler expects methods with this signature (void SomeMethod(object? sender, AlarmEventArgs e)
 
         public void Ring()
         {
-            var args = new AlarmEventArgs(DateTime.Now);
-            OnAlarmRing?.Invoke(this, args);
+            var args = new AlarmEventArgs(DateTime.Now); //this creates the event data.
+            OnAlarmRing?.Invoke(this, args); //this raises the event. It says the alarm has rung and anyone who subscribed, execute your methods.
+            //this is the object that raised the event. args is the info about the event.
         }
     }
 

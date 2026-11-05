@@ -1,0 +1,64 @@
+Summary
+  Generated on: 11/5/2026 - 9:22:20 PM
+  Coverage date: 11/4/2026 - 3:01:54 PM - 11/5/2026 - 9:22:02 PM
+  Parser: MultiReport (2x Cobertura)
+  Assemblies: 1
+  Classes: 42
+  Files: 19
+  Line coverage: 10.7%
+  Covered lines: 98
+  Uncovered lines: 813
+  Coverable lines: 911
+  Total lines: 1583
+  Branch coverage: 2.7% (4 of 144)
+  Covered branches: 4
+  Total branches: 144
+  Method coverage: 23.7% (33 of 139)
+  Full method coverage: 23.7% (33 of 139)
+  Covered methods: 33
+  Fully covered methods: 33
+  Total methods: 139
+
+Assignment2                                    10.7%
+  Assignment2.AlarmClock                          0%
+  Assignment2.AlarmEventArgs                      0%
+  Assignment2.Calculator                          0%
+  Assignment2.Circle                              0%
+  Assignment2.CoffeeMachine                       0%
+  Assignment2.EmailNotification                   0%
+  Assignment2.Employee                            0%
+  Assignment2.EmployeeManager                     0%
+  Assignment2.Extensions                          0%
+  Assignment2.FileLogger                          0%
+  Assignment2.ListProcessor                       0%
+  Assignment2.Logger                              0%
+  Assignment2.Money                               0%
+  Assignment2.Notification                        0%
+  Assignment2.Person                              0%
+  Assignment2.Product                             0%
+  Assignment2.Rectangle                           0%
+  Assignment2.Repository<T>                       0%
+  Assignment2.Shape                               0%
+  Assignment2.SMSNotification                     0%
+  Assignment2.Student                             0%
+  BankAccountInfo.BankAccount                     0%
+  Employees.Contractor                          100%
+  Employees.Employee                            100%
+  Employees.FullTime                            100%
+  Employees.PartTime                            100%
+  LibraryManagement.Book                        100%
+  LibraryManagement.BookQueries                 100%
+  LibraryManagement.GenreCount                  100%
+  MathOps.MathOperations                          0%
+  NotificationAssignment.EmailNotif             100%
+  NotificationAssignment.Logger                 100%
+  NotificationAssignment.NotificationEvent      100%
+  NotificationAssignment.NotificationService    100%
+  NotificationAssignment.PushNotif              100%
+  NotificationAssignment.SMSNotif               100%
+  Program                                         0%
+  ShapeInt.Shape                                  0%
+  VehicleInfo.Bike                                0%
+  VehicleInfo.Car                                 0%
+  VehicleInfo.ElectricCar                         0%
+  VehicleInfo.Vehicle                             0%

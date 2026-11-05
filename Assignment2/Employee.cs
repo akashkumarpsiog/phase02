@@ -117,5 +117,40 @@ namespace Assignment2
                 Console.WriteLine($"Name: {item.Name}, Experience: {item.Experience} years");
             }
         }
+
+        public void EmployeeAnnualSalary()
+        {
+            var annualSalaryData = employees1.Select(e => new
+            {
+                Name = e.name,
+                AnnualSalary = e.salary * 12
+            });
+
+            foreach (var employee in annualSalaryData)
+            {
+                Console.WriteLine($"Name: {employee.Name}");
+                Console.WriteLine($"Annual Salary: {employee.AnnualSalary}");
+            }
+        }
     }
 }
+
+// ANONYMOUS TYPE RETURN LIMITATION:
+// Anonymous types are types generated automatically by the C# compiler.
+// They do not have an explicitly declared name that we can reference in our code.
+//
+// We can use 'var' to store an anonymous type in a local variable because the compiler automatically infers its type.
+//
+// However, we cannot directly declare an anonymous type as a method's return type because we cannot reference its generated type name.
+//
+// For example, the following is invalid:
+//
+// public IEnumerable<AnonymousType> GetEmployeeData()
+//
+// We also cannot use 'var' as a method's return type.
+//
+// If we need to return this data from a method, we should create a
+// named class or record containing Name and AnnualSalary.
+//
+// In this implementation, our method returns void because we only
+// consume and print the anonymous objects locally.
